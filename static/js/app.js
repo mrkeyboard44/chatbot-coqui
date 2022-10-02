@@ -149,7 +149,7 @@ let textInputElementServer = document.getElementById('serverInput');
           let populate = async () => {
             await populateAudioMessages();
             let latest_audio_element = document.getElementById('latest')
-            var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('data-audio-filename'));
+            var audio = new Audio('/app/tts_web/static/messages/' + latest_audio_element.getAttribute('data-audio-filename'));
             audio.play();
           }
           populate()
