@@ -1,7 +1,10 @@
-apt update
-apt install vim
-apt install rsync
-apt install wget
+#!/bin/bash
+
+docker run -it -p 5002:5002 --name mozilla synesthesiam/mozillatts:en
+apt update -y
+apt install vim -y
+apt install rsync -y
+apt install wget -y
 apt-get install --reinstall ca-certificates
 mkdir /usr/local/share/ca-certificates/cacert.org
 wget -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt

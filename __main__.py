@@ -161,11 +161,10 @@ def get_app(
         print(text)
         wav_bytes = text_to_wav(text)
         print(wav_bytes)
-        a = bytearray(wav_bytes)
-        b = numpy.array(a, dtype=numpy.int16)
-        scipy.io.wavfile.write(f"/app/tts_web/static/messages/{dt_string}.wav", 
-22050, b)
-        return jsonify({'serverMessage': json.loads(request.data)['Data']})
+        with open(f"/app/tts_web/static/messages/{dt_string}.wav", "wb") as f:
+            f.write(wav_bytes)
+        
+        return jsonify({'serverMessage': json.loads(request.data)['Data']})})
 
     
     
