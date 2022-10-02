@@ -164,7 +164,7 @@ def get_app(
         with open(f"/app/tts_web/static/messages/{dt_string}.wav", "wb") as f:
             f.write(wav_bytes)
         
-        return jsonify({'serverMessage': json.loads(request.data)['Data']})})
+        return jsonify({'serverMessage': json.loads(request.data)['Data']})
 
     
     
