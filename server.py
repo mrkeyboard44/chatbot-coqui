@@ -1,3 +1,4 @@
+from logging.config import stopListening
 from flask import Flask, request, render_template, jsonify, send_from_directory, config
 import os
 import base64
@@ -23,8 +24,19 @@ def home():
 def get_messages():
     print(os.listdir('./static/messages'))
     filenames = os.listdir('./static/messages')
+    filenames_dict = []
+    filenames_arr = []
+    for file in filenames:
+        
+        dt_str = '-'.join(file.split('.')[0].split('-')[1:])
+        datetime_obj = datetime.strptime(dt_str, '%d-%m-%Y-%H-%M-%S')
+        
+        filenames_dict.append([datetime_obj, file])
+    sorted_dt = sorted(filenames_dict)
+    for filename in sorted_dt:
+        filenames_arr.append(filename[1])
 
-    return jsonify({'messageFilenames': filenames})
+    return jsonify({'audioMessages':filenames_arr})
 
 @app.route('/messages', methods=['POST'])
 def post_messages():
