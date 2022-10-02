@@ -94,6 +94,8 @@ const populateAudioMessages = async () => {
       return res.json().then(json => {
         console.log(json)
         let filenames = json.audioMessages
+        let latest = audioElement = document.getElementById('latest')
+        latest.setAttribute('id', 'old')
         filenames.forEach((element, index, array) => {
           let audioElement = document.querySelector(`[data-audio-filename="${element}"]`);
           if (!audioElement) {
@@ -149,7 +151,7 @@ let textInputElementServer = document.getElementById('serverInput');
           let populate = async () => {
             await populateAudioMessages();
             let latest_audio_element = document.getElementById('latest')
-            var audio = new Audio('/app/tts_web/static/messages/' + latest_audio_element.getAttribute('data-audio-filename'));
+            var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('data-audio-filename'));
             audio.play();
           }
           populate()
