@@ -121,8 +121,8 @@ def get_app(
 
     @app.route('/messages', methods=['GET'])
     def get_messages():
-        print(os.listdir('./static/messages'))
-        filenames = os.listdir('./static/messages')
+        print(os.listdir('/app/tts_web/static/messages'))
+        filenames = os.listdir('/app/tts_web/static/messages')
         filenames_dict = []
         filenames_arr = []
         for file in filenames:
