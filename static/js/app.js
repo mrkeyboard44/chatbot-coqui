@@ -93,9 +93,8 @@ const populateAudioMessages = async () => {
       
       return res.json().then(json => {
         console.log(json)
+        
         let filenames = json.audioMessages
-        let latest = audioElement = document.getElementById('latest')
-        latest.setAttribute('id', 'old')
         filenames.forEach((element, index, array) => {
           let audioElement = document.querySelector(`[data-audio-filename="${element}"]`);
           if (!audioElement) {
@@ -124,6 +123,8 @@ let textInputElementServer = document.getElementById('serverInput');
       let response2 = textInputElementServer.addEventListener('keypress', async function(e){
         if (e.key === 'Enter') {
           
+          let latest = document.getElementById('latest')
+          latest.setAttribute('id', 'old')
           let serverText = textInputElementServer.value;
           
           console.log('New message is "' + serverText + '"');
