@@ -57,8 +57,6 @@ def post_user_messages():
 @app.route('/serverMessages', methods=['POST'])
 def post_server_messages():
     print(json.loads(request.data))
-    b = 'i am data'
-    scipy.io.wavfile.write("static/messages", 22050, b)
     return jsonify({'serverMessage': json.loads(request.data)['Data']})
 
 

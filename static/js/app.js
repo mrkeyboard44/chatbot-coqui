@@ -87,32 +87,37 @@ saveButton.addEventListener('click', () => {
   };
 });
 
-const populateAudioMessages = () => {
+const populateAudioMessages = async () => {
   return fetch('/messages').then(res => {
     if (res.status === 200) {
       
       return res.json().then(json => {
         console.log(json)
         let filenames = json.audioMessages
-        filenames.forEach(filename => {
-          let audioElement = document.querySelector(`[data-audio-filename="${filename}"]`);
+        filenames.forEach((element, index, array) => {
+          let audioElement = document.querySelector(`[data-audio-filename="${element}"]`);
           if (!audioElement) {
             audioElement = document.createElement('audio');
-            audioElement.src = `static/messages/${filename}`;
-            audioElement.setAttribute('data-audio-filename', filename);
+            audioElement.src = `./static/messages/${element}`;
+            audioElement.setAttribute('data-audio-filename', element);
+            if (element.split('-')[0] == 'server' && index == array.length - 1) {
+              audioElement.setAttribute('id', 'latest')
+            }
+            console.log(element)
             audioElement.setAttribute('controls', true);
-            textNode = document.createTextNode(filename.split('-')[0] + ' ' + filename.split('-').slice(4,-1).join(':'))
+            textNode = document.createTextNode(element.split('-')[0] + ' ' + element.split('-').slice(4,-1).join(':'))
             savedAudioMessagesContainer.appendChild(textNode)
             savedAudioMessagesContainer.appendChild(audioElement);
             document.getElementById('saved-audio-messages').value = ''
           }
         });
+        
       });
     }
     console.log('Invalid status getting messages: ' + res.status);
   });
 };
-
+populateAudioMessages();
 let textInputElementServer = document.getElementById('serverInput');
       let response2 = textInputElementServer.addEventListener('keypress', async function(e){
         if (e.key === 'Enter') {
@@ -141,13 +146,18 @@ let textInputElementServer = document.getElementById('serverInput');
             textInputElementServer.value = ''
             populateAudioMessages()
           })
+          let populate = async () => {
+            await populateAudioMessages();
+            let latest_audio_element = document.getElementById('latest')
+            var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('data-audio-filename'));
+            audio.play();
+          }
+          populate()
         };
       });
-
-
+      
       
 
-      populateAudioMessages();
 
 
 
