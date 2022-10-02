@@ -101,6 +101,7 @@ const populateAudioMessages = async () => {
             audioElement = document.createElement('audio');
             audioElement.src = `./static/messages/${element}`;
             audioElement.setAttribute('data-audio-filename', element);
+            audioElement.setAttribute('class', element);
             if (element.split('-')[0] == 'server' && index == array.length - 1) {
               audioElement.setAttribute('id', 'latest')
             }
@@ -152,7 +153,7 @@ let textInputElementServer = document.getElementById('serverInput');
           let populate = async () => {
             await populateAudioMessages();
             let latest_audio_element = document.getElementById('latest')
-            var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('data-audio-filename'));
+            var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('class'));
             audio.play();
           }
           populate()
