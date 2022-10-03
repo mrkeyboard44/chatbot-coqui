@@ -154,11 +154,12 @@ let textInputElementServer = document.getElementById('serverInput');
             populateAudioMessages()
           })
           let populate = async () => {
-            await populateAudioMessages();
-            console.log('start autoplay')
-            let latest_audio_element = document.getElementById('latest')
-            var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('class'));
-            audio.play();
+            await populateAudioMessages().then(() => {
+              console.log('start autoplay')
+              let latest_audio_element = document.getElementById('latest')
+              var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('class'));
+              audio.play();
+            });
           }
           populate()
         };
