@@ -125,7 +125,9 @@ let textInputElementServer = document.getElementById('serverInput');
         if (e.key === 'Enter') {
           
           let latest = document.getElementById('latest')
-          latest.setAttribute('id', 'old')
+          if (latest) {
+            latest.setAttribute('id', 'old')
+          }
           let serverText = textInputElementServer.value;
           
           console.log('New message is "' + serverText + '"');
