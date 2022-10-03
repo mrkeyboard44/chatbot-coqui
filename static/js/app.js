@@ -109,8 +109,12 @@ const populateAudioMessages = async () => {
             audioElement.setAttribute('controls', true);
             textNode = document.createTextNode(element.split('-')[0] + ' ' + element.split('-').slice(4,-1).join(':'))
             savedAudioMessagesContainer.appendChild(textNode)
-            savedAudioMessagesContainer.appendChild(audioElement);
-            document.getElementById('saved-audio-messages').value = ''
+            let insert_audio_file = async () => {
+              await savedAudioMessagesContainer.appendChild(audioElement);
+            } 
+            insert_audio_file().then(() => {
+              document.getElementById('saved-audio-messages').value = ''
+            })
           }
         });
         
