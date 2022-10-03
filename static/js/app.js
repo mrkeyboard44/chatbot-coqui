@@ -155,17 +155,18 @@ let textInputElementServer = document.getElementById('serverInput');
             messages = document.getElementById('saved-audio-messages');
             messages.appendChild(textElement);
             textInputElementServer.value = ''
-            populateAudioMessages()
+          }).then(() => {
+            let populate = async () => {
+              await populateAudioMessages().then(() => {
+                console.log('start autoplay')
+                let latest_audio_element = document.getElementById('latest')
+                var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('class'));
+                audio.play();
+              });
+            }
+            populate()
           })
-          let populate = async () => {
-            await populateAudioMessages().then(() => {
-              console.log('start autoplay')
-              let latest_audio_element = document.getElementById('latest')
-              var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('class'));
-              audio.play();
-            });
-          }
-          populate()
+          
         };
       });
       
