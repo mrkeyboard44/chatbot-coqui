@@ -90,8 +90,8 @@ saveButton.addEventListener('click', () => {
 const populateAudioMessages = async () => {
   return fetch('/messages').then(res => {
     if (res.status === 200) {
-      
       return res.json().then(json => {
+      
         console.log(json)
         
         let filenames = json.audioMessages
@@ -114,6 +114,7 @@ const populateAudioMessages = async () => {
           }
         });
         
+        console.log('elements populated')
       });
     }
     console.log('Invalid status getting messages: ' + res.status);
@@ -154,6 +155,7 @@ let textInputElementServer = document.getElementById('serverInput');
           })
           let populate = async () => {
             await populateAudioMessages();
+            console.log('start autoplay')
             let latest_audio_element = document.getElementById('latest')
             var audio = new Audio('./static/messages/' + latest_audio_element.getAttribute('class'));
             audio.play();
