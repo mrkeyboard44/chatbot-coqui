@@ -1,9 +1,10 @@
-#!flask/bin/python
 import argparse
 import io
 import json
 import os
 import sys
+import numpy
+import datetime
 from pathlib import Path
 from typing import Union
 
@@ -136,53 +137,80 @@ def style_wav_uri_to_dict(style_wav: str) -> Union[str, dict]:
         return style_wav  # style_wav is a gst dictionary with {token1_id : token1_weigth, ...}
     return None
 
+from logging.config import stopListening
+from flask import Flask, request, render_template, jsonify, send_from_directory, config
+import os
+import base64
+import json
+from datetime import datetime
+import scipy.io
 
-@app.route("/")
-def index():
-    return render_template(
-        "index.html",
-        show_details=args.show_details,
-        use_multi_speaker=use_multi_speaker,
-        speaker_ids=speaker_manager.speaker_ids if speaker_manager is not None else None,
-        use_gst=use_gst,
-    )
+app = Flask(__name__)
 
-
-@app.route("/details")
-def details():
-    model_config = load_config(args.tts_config)
-    if args.vocoder_config is not None and os.path.isfile(args.vocoder_config):
-        vocoder_config = load_config(args.vocoder_config)
-    else:
-        vocoder_config = None
-
-    return render_template(
-        "details.html",
-        show_details=args.show_details,
-        model_config=model_config,
-        vocoder_config=vocoder_config,
-        args=args.__dict__,
-    )
+dirname = os.path.dirname("/media/matt/2-Samsung-Files/Documents/Immersio/chat_code/web-audio-example/record-audio/record-server-example/")
 
 
-@app.route("/api/tts", methods=["GET"])
+
+def rpath(path):
+    return  os.path.join(dirname, path)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+
+@app.route('/messages', methods=['GET'])
+def get_messages():
+    print(os.listdir('./static/messages'))
+    filenames = os.listdir('./static/messages')
+    filenames_dict = []
+    filenames_arr = []
+    for file in filenames:
+        
+        dt_str = '-'.join(file.split('.')[0].split('-')[1:])
+        datetime_obj = datetime.strptime(dt_str, '%d-%m-%Y-%H-%M-%S')
+        
+        filenames_dict.append([datetime_obj, file])
+    sorted_dt = sorted(filenames_dict)
+    for filename in sorted_dt:
+        filenames_arr.append(filename[1])
+
+    return jsonify({'audioMessages':filenames_arr})
+
+@app.route('/messages', methods=['POST'])
+def post_messages():
+    now = datetime.now()
+    dt_string = now.strftime("user-%d-%m-%Y-%H-%M-%S")
+    f = open(f'./static/messages/{dt_string}.wav', 'wb')
+    raw_data = json.loads(request.data)['message']
+    bytes = base64.b64decode(raw_data)
+    f.write(bytes)
+    f.close()
+    return jsonify({'message': 'Saved message'})
+
+@app.route('/userMessages', methods=['POST'])
+def post_user_messages():
+    print(json.loads(request.data))
+    return jsonify({'userMessage': json.loads(request.data)['Data']})
+
+
+@app.route("/serverMessages", methods=["POST"])
 def tts():
-    text = request.args.get("text")
-    speaker_idx = request.args.get("speaker_id", "")
-    style_wav = request.args.get("style_wav", "")
-
-    style_wav = style_wav_uri_to_dict(style_wav)
-    print(" > Model input: {}".format(text))
-    wavs = synthesizer.tts(text, speaker_name=speaker_idx, style_wav=style_wav)
+    text = json.loads(request.data)['Data'] 
+    wavs = synthesizer.tts(text, speaker_name=None, style_wav=None)
+    print(type(wavs))
+    #a = bytearray(wavs)
+    b = numpy.array(wavs)
+    now = datetime.now()
+    dt_string = now.strftime("server-%d-%m-%Y-%H-%M-%S")
+    scipy.io.wavfile.write(f"./static/messages/{dt_string}.wav", 22050, b.astype(numpy.float32))
     out = io.BytesIO()
     synthesizer.save_wav(wavs, out)
-    return send_file(out, mimetype="audio/wav")
-
+    return jsonify({'serverMessage': json.loads(request.data)['Data']})
 
 def main():
-    app.run(debug=args.debug, host="::", port=args.port)
+    app.run(debug=args.debug, host="::", port=5002)
 
 
 if __name__ == "__main__":
     main()
-
