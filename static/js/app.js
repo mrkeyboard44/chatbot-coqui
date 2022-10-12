@@ -1,6 +1,6 @@
 
 
-const recordAudio = () =>
+const recordAudio = () => {
         new Promise(async resolve => {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           const mediaRecorder = new MediaRecorder(stream);
@@ -29,7 +29,7 @@ const recordAudio = () =>
             });
 
           resolve({ start, stop });
-        });
+        })};
     
 
 
